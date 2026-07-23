@@ -3,7 +3,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { employeeAPI } from '../services/api';
 import { useToast } from '../store/ToastContext';
 import FaceCameraModal from '../components/FaceCameraModal';
-import { HiOutlineArrowLeft, HiOutlineSave, HiOutlineCamera, HiOutlineUserCircle } from 'react-icons/hi';
+import {
+  HiOutlineArrowLeft,
+  HiOutlineSave,
+  HiOutlineCamera,
+  HiOutlineUserCircle,
+  HiOutlineLocationMarker,
+  HiOutlineCheckCircle,
+  HiOutlineExclamationCircle,
+} from 'react-icons/hi';
 
 const EmployeeFormPage = () => {
   const { id } = useParams();
@@ -280,9 +288,13 @@ const EmployeeFormPage = () => {
             </div>
             <div>
               {form.facePhotoUrl ? (
-                <span className="badge badge-success">✅ Đã đăng ký khuôn mặt Face ID</span>
+                <span className="badge badge-success flex items-center gap-xs">
+                  <HiOutlineCheckCircle /> Đã đăng ký khuôn mặt Face ID
+                </span>
               ) : (
-                <span className="badge badge-warning">⚠️ Chưa có ảnh Face ID mẫu</span>
+                <span className="badge badge-warning flex items-center gap-xs">
+                  <HiOutlineExclamationCircle /> Chưa có ảnh Face ID mẫu
+                </span>
               )}
               <p className="text-xs text-secondary" style={{ marginTop: 8 }}>
                 Nhấp nút Chụp ảnh Face ID để dùng camera canh khung oval lấy nét khuôn mặt.
@@ -297,10 +309,10 @@ const EmployeeFormPage = () => {
             <h3>Địa điểm làm việc</h3>
             <button
               type="button"
-              className="btn btn-secondary btn-sm"
+              className="btn btn-secondary btn-sm flex items-center gap-xs"
               onClick={handleGetCurrentLocation}
             >
-              📍 Lấy vị trí hiện tại
+              <HiOutlineLocationMarker /> Lấy vị trí hiện tại
             </button>
           </div>
           <div className="card-body">

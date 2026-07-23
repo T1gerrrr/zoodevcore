@@ -9,6 +9,10 @@ import {
   HiOutlineExclamationCircle,
   HiOutlineSave,
   HiOutlineSparkles,
+  HiOutlineChartBar,
+  HiOutlineClock,
+  HiOutlineLightBulb,
+  HiOutlineCog,
 } from 'react-icons/hi';
 import './WeeklySchedulePage.css';
 
@@ -297,7 +301,7 @@ const WeeklySchedulePage = () => {
                 style={{ backgroundColor: '#eff6ff', color: '#1d4ed8', borderColor: '#bfdbfe' }}
                 onClick={() => setShowAutoModal(true)}
               >
-                🤖 Xếp lịch tự động thông minh
+                <HiOutlineSparkles /> Xếp lịch tự động thông minh
               </button>
             )}
             {!isConfirmed ? (
@@ -421,7 +425,7 @@ const WeeklySchedulePage = () => {
           <div className="modal-card card p-md modal-scrollable" style={{ maxWidth: 580, width: '92%', maxHeight: '90vh', overflowY: 'auto', background: '#ffffff', borderRadius: 16 }}>
             <div className="flex justify-between items-center mb-md border-b pb-sm">
               <h3 className="font-bold text-base text-primary flex items-center gap-xs" style={{ margin: 0 }}>
-                🤖 Thiết lập xếp ca tự động thông minh
+                <HiOutlineSparkles /> Thiết lập xếp ca tự động thông minh
               </h3>
               <button className="btn btn-ghost btn-sm" onClick={() => setShowAutoModal(false)}>✕</button>
             </div>
@@ -430,11 +434,13 @@ const WeeklySchedulePage = () => {
               {/* Section 1: Shift breakdown quota */}
               <div className="p-sm rounded" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
                 <h4 className="font-bold text-sm mb-xs text-slate-800 flex items-center gap-xs">
-                  📊 1. Phân bổ số lượng ca làm / tuần cho 1 nhân viên:
+                  <HiOutlineChartBar /> 1. Phân bổ số lượng ca làm / tuần cho 1 nhân viên:
                 </h4>
                 <div className="grid grid-cols-2 gap-sm mt-xs">
                   <div>
-                    <label className="text-xs font-semibold block text-slate-700 mb-1">🟦 Số ca Dài / Cả ngày:</label>
+                    <label className="text-xs font-semibold block text-slate-700 mb-1 flex items-center gap-xs">
+                      <span className="preset-color-dot" style={{ backgroundColor: '#3b82f6' }} /> Số ca Dài / Cả ngày:
+                    </label>
                     <input
                       type="number"
                       min={0}
@@ -446,7 +452,9 @@ const WeeklySchedulePage = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold block text-slate-700 mb-1">🟩 Số ca Sáng:</label>
+                    <label className="text-xs font-semibold block text-slate-700 mb-1 flex items-center gap-xs">
+                      <span className="preset-color-dot" style={{ backgroundColor: '#10b981' }} /> Số ca Sáng:
+                    </label>
                     <input
                       type="number"
                       min={0}
@@ -458,7 +466,9 @@ const WeeklySchedulePage = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold block text-slate-700 mb-1">🟨 Số ca Chiều:</label>
+                    <label className="text-xs font-semibold block text-slate-700 mb-1 flex items-center gap-xs">
+                      <span className="preset-color-dot" style={{ backgroundColor: '#f59e0b' }} /> Số ca Chiều:
+                    </label>
                     <input
                       type="number"
                       min={0}
@@ -470,7 +480,9 @@ const WeeklySchedulePage = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-semibold block text-slate-700 mb-1">🟪 Số ca Tối:</label>
+                    <label className="text-xs font-semibold block text-slate-700 mb-1 flex items-center gap-xs">
+                      <span className="preset-color-dot" style={{ backgroundColor: '#8b5cf6' }} /> Số ca Tối:
+                    </label>
                     <input
                       type="number"
                       min={0}
@@ -484,11 +496,11 @@ const WeeklySchedulePage = () => {
                 </div>
 
                 <div className="flex justify-between items-center mt-sm pt-xs border-t text-xs font-bold">
-                  <span className="text-primary">
-                    👉 Tổng ca làm: {shiftQuotas.fullCount + shiftQuotas.morningCount + shiftQuotas.afternoonCount + shiftQuotas.eveningCount} ca/tuần
+                  <span className="text-primary flex items-center gap-xs">
+                    Tổng ca làm: {shiftQuotas.fullCount + shiftQuotas.morningCount + shiftQuotas.afternoonCount + shiftQuotas.eveningCount} ca/tuần
                   </span>
-                  <span className="text-amber-700">
-                    🗓️ Tự động nghỉ (OFF): {Math.max(0, 7 - (shiftQuotas.fullCount + shiftQuotas.morningCount + shiftQuotas.afternoonCount + shiftQuotas.eveningCount))} ngày/tuần
+                  <span className="text-amber-700 flex items-center gap-xs">
+                    <HiOutlineCalendar /> Tự động nghỉ (OFF): {Math.max(0, 7 - (shiftQuotas.fullCount + shiftQuotas.morningCount + shiftQuotas.afternoonCount + shiftQuotas.eveningCount))} ngày/tuần
                   </span>
                 </div>
               </div>
@@ -496,7 +508,7 @@ const WeeklySchedulePage = () => {
               {/* Section 2: Custom Shift Hours */}
               <div className="p-sm rounded" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
                 <h4 className="font-bold text-sm mb-xs text-slate-800 flex items-center gap-xs">
-                  ⏰ 2. Cài đặt khung giờ cho từng ca (Ví dụ: 09:00 - 16:00):
+                  <HiOutlineClock /> 2. Cài đặt khung giờ cho từng ca (Ví dụ: 09:00 - 16:00):
                 </h4>
                 <div className="flex flex-col gap-xs text-xs">
                   {/* Full shift custom hours */}
@@ -589,8 +601,9 @@ const WeeklySchedulePage = () => {
                 </div>
               </div>
 
-              <div className="card p-sm text-xs" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', color: '#1e40af', borderRadius: 8 }}>
-                💡 <strong>Cơ chế tự động:</strong> Thuật toán sẽ dải đều đúng số lượng ca dài/sáng/chiều/tối và ngày nghỉ lệch nhau giữa {employees.length} nhân viên để đảm bảo công bằng 100% và cửa hàng luôn đủ nhân sự.
+              <div className="card p-sm text-xs flex items-start gap-xs" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', color: '#1e40af', borderRadius: 8 }}>
+                <HiOutlineLightBulb size={18} style={{ flexShrink: 0, marginTop: 2 }} />
+                <div><strong>Cơ chế tự động:</strong> Thuật toán sẽ dải đều đúng số lượng ca dài/sáng/chiều/tối và ngày nghỉ lệch nhau giữa {employees.length} nhân viên để đảm bảo công bằng 100% và cửa hàng luôn đủ nhân sự.</div>
               </div>
             </div>
 
@@ -603,7 +616,7 @@ const WeeklySchedulePage = () => {
                 onClick={handleAutoGenerate}
                 disabled={autoGenerating}
               >
-                {autoGenerating ? <span className="spinner spinner-sm" /> : <>✨ Chạy xếp lịch tự động</>}
+                {autoGenerating ? <span className="spinner spinner-sm" /> : <><HiOutlineSparkles /> Chạy xếp lịch tự động</>}
               </button>
             </div>
           </div>

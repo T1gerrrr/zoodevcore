@@ -8,6 +8,8 @@ import {
   HiOutlineSave,
   HiOutlineCheckCircle,
   HiOutlineExclamationCircle,
+  HiOutlineLockClosed,
+  HiOutlineCog,
 } from 'react-icons/hi';
 import './WeeklyPayrollPage.css';
 
@@ -216,11 +218,11 @@ const WeeklyPayrollPage = () => {
           <div>
             {!isFinalized ? (
               <button
-                className="btn btn-primary btn-lg"
+                className="btn btn-primary btn-lg flex items-center gap-xs"
                 onClick={() => handleFinalizePayroll('finalized')}
                 disabled={finalizing}
               >
-                {finalizing ? <span className="spinner spinner-sm" /> : '🔒 Chốt bảng lương tuần'}
+                {finalizing ? <span className="spinner spinner-sm" /> : <><HiOutlineLockClosed /> Chốt bảng lương tuần</>}
               </button>
             ) : (
               <button
@@ -280,12 +282,12 @@ const WeeklyPayrollPage = () => {
                         </span>
                         <button
                           type="button"
-                          className="btn btn-ghost btn-xs text-primary"
+                          className="btn btn-ghost btn-xs text-primary flex items-center gap-xs"
                           style={{ padding: '2px 6px', fontSize: '0.75rem' }}
                           onClick={() => handleOpenSalaryModal(emp)}
                           title="Cài đặt lại đơn giá lương"
                         >
-                          ⚙️ Đổi lương
+                          <HiOutlineCog size={13} /> Đổi lương
                         </button>
                       </div>
                       <div className="text-xs text-secondary mt-xs">
@@ -389,7 +391,7 @@ const WeeklyPayrollPage = () => {
           <div className="modal-card card p-lg" style={{ maxWidth: 440, width: '90%', background: '#ffffff', borderRadius: 16 }}>
             <div className="flex justify-between items-center mb-md border-b pb-sm">
               <h3 className="font-bold text-base text-primary flex items-center gap-xs" style={{ margin: 0 }}>
-                ⚙️ Cài đặt mức lương - {salaryForm.name}
+                <HiOutlineCog /> Cài đặt mức lương - {salaryForm.name}
               </h3>
               <button className="btn btn-ghost btn-sm" onClick={() => setShowSalaryModal(false)}>✕</button>
             </div>

@@ -174,8 +174,8 @@ const NotificationsPage = () => {
             Để nhận thông báo nổ trực tiếp trên màn hình máy tính/điện thoại khi nhân viên đủ công, bạn hãy bật lại quyền theo các bước:
           </p>
           <ol className="text-xs text-gray-700 mt-xs pl-md list-decimal" style={{ margin: '8px 0 0 16px' }}>
-            <li>Bấm vào <strong>Biểu tượng 🔒 Ổ khóa</strong> hoặc <strong>⚙️ Cài đặt trang web</strong> ở bên trái thanh địa chỉ URL trình duyệt.</li>
-            <li>Tại mục <strong>Thông báo (Notifications)</strong> $\rightarrow$ Đổi từ <strong>Chặn (Block)</strong> sang <strong>Cho phép (Allow)</strong> và bấm F5 tải lại trang.</li>
+            <li>Bấm vào <strong>Biểu tượng Ổ khóa</strong> hoặc <strong>Cài đặt trang web</strong> ở bên trái thanh địa chỉ URL trình duyệt.</li>
+            <li>Tại mục <strong>Thông báo (Notifications)</strong> → Đổi từ <strong>Chặn (Block)</strong> sang <strong>Cho phép (Allow)</strong> và bấm F5 tải lại trang.</li>
           </ol>
         </div>
       )}
@@ -184,15 +184,15 @@ const NotificationsPage = () => {
       {typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent) && (
         <div className="card p-md mb-md" style={{ backgroundColor: '#f0f9ff', borderLeft: '4px solid #0284c7' }}>
           <strong className="text-primary flex items-center gap-xs mb-xs">
-            📱 Hướng dẫn bật Push Notification trên iPhone / iPad (iOS 16.4+)
+            <HiOutlineBell /> Hướng dẫn bật Push Notification trên iPhone / iPad (iOS 16.4+)
           </strong>
           <p className="text-xs text-gray-700">
             Apple (iOS) yêu cầu thêm trang web ra Màn hình chính trước khi bật Push Notification:
           </p>
           <ol className="text-xs text-gray-700 mt-xs pl-md list-decimal" style={{ margin: '8px 0 0 16px' }}>
-            <li>Trong Safari, bấm vào nút <strong>Chia sẻ (Share ⎘)</strong> ở thanh dưới cùng màn hình.</li>
-            <li>Cuộn xuống bấm <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong> $\rightarrow$ Bấm <strong>Thêm</strong>.</li>
-            <li>Mở ứng dụng từ biểu tượng ngoài Màn hình chính $\rightarrow$ Cho phép nhận Thông báo.</li>
+            <li>Trong Safari, bấm vào nút <strong>Chia sẻ (Share)</strong> ở thanh dưới cùng màn hình.</li>
+            <li>Cuộn xuống bấm <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong> → Bấm <strong>Thêm</strong>.</li>
+            <li>Mở ứng dụng từ biểu tượng ngoài Màn hình chính → Cho phép nhận Thông báo.</li>
           </ol>
         </div>
       )}
