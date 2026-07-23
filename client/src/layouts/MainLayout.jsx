@@ -64,6 +64,7 @@ const MainLayout = () => {
   // Employee navigation items
   const employeeNav = [
     { to: '/checkin', icon: <HiOutlineHome />, label: 'Chấm công' },
+    { to: '/checkin', icon: <HiOutlineHome />, label: 'Chấm công' },
     { to: '/my-schedule', icon: <HiOutlineCalendar />, label: 'Lịch ca làm' },
     { to: '/my-history', icon: <HiOutlineClock />, label: 'Lịch sử & Lương' },
   ];

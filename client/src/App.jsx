@@ -4,6 +4,7 @@ import { ToastProvider } from './store/ToastContext';
 import MainLayout from './layouts/MainLayout';
 import LoginPage from './pages/LoginPage';
 import CheckInPage from './pages/CheckInPage';
+import CheckInPageV2 from './pages/CheckInPageV2';
 import DashboardPage from './pages/DashboardPage';
 import EmployeeListPage from './pages/EmployeeListPage';
 import EmployeeFormPage from './pages/EmployeeFormPage';
@@ -73,6 +74,11 @@ const AppRoutes = () => {
         <Route path="/checkin" element={
           <ProtectedRoute allowedRoles={['employee']}>
             <CheckInPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/checkin-v2" element={
+          <ProtectedRoute allowedRoles={['employee']}>
+            <CheckInPageV2 />
           </ProtectedRoute>
         } />
         <Route path="/my-schedule" element={

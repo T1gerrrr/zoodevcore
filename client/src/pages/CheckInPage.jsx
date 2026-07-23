@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '../store/AuthContext';
 import { useToast } from '../store/ToastContext';
 import useGeolocation from '../hooks/useGeolocation';
@@ -346,8 +347,17 @@ const CheckInPage = () => {
   }
 
   return (
-    <div className="checkin-page">
+    <div className="page checkin-page">
       <div className="checkin-container">
+        {/* UI Version Switcher */}
+        <div className="v2-switcher-bar" style={{ display: 'flex', background: '#e2e8f0', borderRadius: 30, padding: 4, marginBottom: 12 }}>
+          <NavLink to="/checkin" className="v2-switcher-item active" style={{ flex: 1, textAlign: 'center', padding: '8px 16px', fontSize: '0.8125rem', fontWeight: 600, borderRadius: 26, background: '#ffffff', color: '#1565c0', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+            Giao diện V1
+          </NavLink>
+          <NavLink to="/checkin-v2" className="v2-switcher-item" style={{ flex: 1, textAlign: 'center', padding: '8px 16px', fontSize: '0.8125rem', fontWeight: 600, borderRadius: 26, color: '#64748b', textDecoration: 'none' }}>
+            Giao diện V2 (Mới ✨)
+          </NavLink>
+        </div>
         {/* Time Display */}
         <div className="checkin-time-block">
           <div className="checkin-date">{formatDate(currentTime)}</div>
