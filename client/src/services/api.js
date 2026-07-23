@@ -81,6 +81,7 @@ export const scheduleAPI = {
   saveWeekly: (data) => api.post('/schedules/weekly', data),
   confirmWeekly: (data) => api.post('/schedules/weekly/confirm', data),
   unconfirmWeekly: (data) => api.post('/schedules/weekly/unconfirm', data),
+  autoGenerateWeekly: (data) => api.post('/schedules/weekly/auto-generate', data),
 };
 
 export default api;

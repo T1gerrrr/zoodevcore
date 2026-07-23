@@ -72,11 +72,41 @@ const WeeklySchedulePage = () => {
   const [saving, setSaving] = useState(false);
   const [confirming, setConfirming] = useState(false);
 
+  // Auto-Scheduling Modal state
+  const [showAutoModal, setShowAutoModal] = useState(false);
+  const [autoGenerating, setAutoGenerating] = useState(false);
+  const [autoConfig, setAutoConfig] = useState({
+    workDays: 5,
+    offDays: 2,
+    shiftMode: 'rotating',
+  });
+
   const weekDays = getDatesOfWeek(currentWeekId);
 
   useEffect(() => {
     fetchInitialData();
   }, [currentWeekId]);
+
+  const handleAutoGenerate = async () => {
+    setAutoGenerating(true);
+    try {
+      const res = await scheduleAPI.autoGenerateWeekly({
+        weekId: currentWeekId,
+        workDaysPerWeek: autoConfig.workDays,
+        offDaysPerWeek: autoConfig.offDays,
+        shiftMode: autoConfig.shiftMode,
+      });
+
+      toast.success(res.data.message || 'Đã tạo lịch tự động thành công!');
+      setShowAutoModal(false);
+      await fetchInitialData();
+    } catch (err) {
+      console.error('Auto generate error:', err);
+      toast.error(err.response?.data?.error || 'Không thể tạo lịch tự động');
+    } finally {
+      setAutoGenerating(false);
+    }
+  };
 
   const fetchInitialData = async () => {
     setLoading(true);
@@ -235,7 +265,16 @@ const WeeklySchedulePage = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-sm">
+          <div className="flex items-center gap-sm flex-wrap">
+            {!isConfirmed && (
+              <button
+                className="btn btn-secondary flex items-center gap-xs"
+                style={{ backgroundColor: '#eff6ff', color: '#1d4ed8', borderColor: '#bfdbfe' }}
+                onClick={() => setShowAutoModal(true)}
+              >
+                🤖 Xếp lịch tự động thông minh
+              </button>
+            )}
             {!isConfirmed ? (
               <button
                 className="btn btn-primary btn-lg flex items-center gap-xs"
@@ -347,6 +386,90 @@ const WeeklySchedulePage = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Auto Schedule Settings Modal */}
+      {showAutoModal && (
+        <div className="modal-backdrop">
+          <div className="modal-card card p-lg" style={{ maxWidth: 520, width: '90%', background: '#ffffff', borderRadius: 16 }}>
+            <div className="flex justify-between items-center mb-md border-b pb-sm">
+              <h3 className="font-bold text-lg text-primary flex items-center gap-xs" style={{ margin: 0 }}>
+                🤖 Thiết lập xếp lịch tự động thông minh
+              </h3>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowAutoModal(false)}>✕</button>
+            </div>
+
+            <div className="modal-body flex flex-col gap-md mb-lg">
+              <div>
+                <label className="form-label font-semibold text-sm block mb-xs">
+                  Số ca làm việc / tuần của mỗi nhân viên:
+                </label>
+                <select
+                  className="input-select w-full"
+                  style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1' }}
+                  value={autoConfig.workDays}
+                  onChange={(e) => {
+                    const work = parseInt(e.target.value, 10);
+                    setAutoConfig((prev) => ({
+                      ...prev,
+                      workDays: work,
+                      offDays: Math.max(0, 7 - work),
+                    }));
+                  }}
+                >
+                  <option value={5}>5 ca làm / tuần (Nghỉ 2 ngày)</option>
+                  <option value={6}>6 ca làm / tuần (Nghỉ 1 ngày)</option>
+                  <option value={4}>4 ca làm / tuần (Nghỉ 3 ngày)</option>
+                  <option value={7}>7 ca làm / tuần (Không nghỉ)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="form-label font-semibold text-sm block mb-xs">
+                  Số ngày nghỉ (OFF) / tuần:
+                </label>
+                <div className="p-xs text-sm font-bold text-secondary bg-gray-50 rounded border" style={{ padding: '8px 12px' }}>
+                  🗓️ {autoConfig.offDays} ngày nghỉ (OFF) / tuần
+                </div>
+              </div>
+
+              <div>
+                <label className="form-label font-semibold text-sm block mb-xs">
+                  Quy tắc phân bổ khung giờ ca làm:
+                </label>
+                <select
+                  className="input-select w-full"
+                  style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1' }}
+                  value={autoConfig.shiftMode}
+                  onChange={(e) => setAutoConfig((prev) => ({ ...prev, shiftMode: e.target.value }))}
+                >
+                  <option value="rotating">🔄 Xoay ca công bằng (Đổi luân phiên Cả ngày, Sáng, Chiều, Tối)</option>
+                  <option value="full">🟦 Ca Cả Ngày (08:00 - 17:00)</option>
+                  <option value="morning">🟩 Ca Sáng (08:00 - 12:00)</option>
+                  <option value="afternoon">🟨 Ca Chiều (13:00 - 17:00)</option>
+                  <option value="evening">🟪 Ca Tối (17:00 - 21:00)</option>
+                </select>
+              </div>
+
+              <div className="card p-sm text-xs" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', color: '#1e40af', borderRadius: 8 }}>
+                💡 <strong>Cơ chế tự động:</strong> Hệ thống sẽ tự động dải lệch ngày nghỉ (staggered OFF days) giữa {employees.length} nhân viên để cửa hàng luôn có đủ nhân sự trực mỗi ngày và đảm bảo tổng ca làm bằng nhau.
+              </div>
+            </div>
+
+            <div className="modal-footer flex justify-end gap-sm border-t pt-md">
+              <button className="btn btn-secondary" onClick={() => setShowAutoModal(false)}>
+                Hủy
+              </button>
+              <button
+                className="btn btn-primary flex items-center gap-xs"
+                onClick={handleAutoGenerate}
+                disabled={autoGenerating}
+              >
+                {autoGenerating ? <span className="spinner spinner-sm" /> : <>✨ Chạy xếp lịch tự động</>}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
