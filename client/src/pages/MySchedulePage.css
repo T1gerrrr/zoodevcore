@@ -1,13 +1,14 @@
 .my-schedule-page {
   max-width: 960px;
   margin: 0 auto;
+  padding-bottom: calc(var(--bottom-nav-height) + max(32px, env(safe-area-inset-bottom, 32px)));
 }
 
 .unconfirmed-card {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.02));
   border: 1.5px dashed rgba(245, 158, 11, 0.4);
-  padding: 3rem 1.5rem;
-  border-radius: var(--radius-md, 12px);
+  padding: 2.5rem 1.25rem;
+  border-radius: var(--radius-md, 16px);
 }
 
 .unconfirmed-icon {
@@ -26,8 +27,8 @@
   transition: transform 0.2s, box-shadow 0.2s;
   border-top: 4px solid #cbd5e1;
   background-color: #ffffff;
-  border-radius: var(--radius-md, 12px);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md, 16px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .shift-day-card.is-working {
@@ -41,7 +42,7 @@
 
 .shift-day-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
 .shift-day-header {
@@ -84,4 +85,22 @@
   font-size: 0.9375rem;
   font-style: italic;
   padding: 0.5rem 0;
+}
+
+/* iOS Mobile Responsive Styling */
+@media (max-width: 768px) {
+  .my-schedule-page {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .shifts-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .shift-day-card {
+    border-radius: 14px;
+    padding: 1rem;
+  }
 }

@@ -92,7 +92,7 @@ const AttendanceHistoryPage = () => {
   const [expandedRecord, setExpandedRecord] = useState(null);
 
   return (
-    <div className="page">
+    <div className="page history-page" style={{ paddingBottom: 'calc(var(--bottom-nav-height) + max(32px, env(safe-area-inset-bottom, 32px)))' }}>
       <div className="page-header">
         <h1 className="page-title">Lịch sử chấm công</h1>
         <p className="page-subtitle">Xem lịch sử check-in / check-out và tổng hợp ngày nghỉ</p>
