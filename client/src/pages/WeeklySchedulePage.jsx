@@ -78,6 +78,7 @@ const WeeklySchedulePage = () => {
 
   // Auto-Scheduling Modal state
   const [showAutoModal, setShowAutoModal] = useState(false);
+  const [showShiftHoursModal, setShowShiftHoursModal] = useState(false);
   const [autoGenerating, setAutoGenerating] = useState(false);
   const [autoConfig, setAutoConfig] = useState({
     workDays: 5,
@@ -295,6 +296,13 @@ const WeeklySchedulePage = () => {
           </div>
 
           <div className="flex items-center gap-sm flex-wrap">
+            <button
+              className="btn btn-secondary flex items-center gap-xs"
+              onClick={() => setShowShiftHoursModal(true)}
+              title="Thiết lập khung giờ cho từng ca làm việc"
+            >
+              <HiOutlineCog /> Cấu hình ca làm
+            </button>
             {!isConfirmed && (
               <button
                 className="btn btn-secondary flex items-center gap-xs"
@@ -617,6 +625,135 @@ const WeeklySchedulePage = () => {
                 disabled={autoGenerating}
               >
                 {autoGenerating ? <span className="spinner spinner-sm" /> : <><HiOutlineSparkles /> Chạy xếp lịch tự động</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Standalone Shift Hours Configuration Modal */}
+      {showShiftHoursModal && (
+        <div className="modal-backdrop">
+          <div className="modal-card card p-lg" style={{ maxWidth: 500, width: '90%', background: '#ffffff', borderRadius: 16 }}>
+            <div className="flex justify-between items-center mb-md border-b pb-sm">
+              <h3 className="font-bold text-base text-primary flex items-center gap-xs" style={{ margin: 0 }}>
+                <HiOutlineCog /> Cấu hình khung giờ ca làm việc
+              </h3>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowShiftHoursModal(false)}>✕</button>
+            </div>
+
+            <div className="modal-body flex flex-col gap-md mb-lg">
+              <p className="text-xs text-secondary mb-xs">
+                Thiết lập giờ bắt đầu và kết thúc cho các ca làm việc của cửa hàng:
+              </p>
+
+              {/* Full Shift */}
+              <div className="p-sm rounded flex items-center justify-between gap-md" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div className="flex items-center gap-xs">
+                  <span className="preset-color-dot" style={{ backgroundColor: '#3b82f6' }} />
+                  <span className="text-xs font-bold text-slate-800">Ca Dài / Full:</span>
+                </div>
+                <div className="flex items-center gap-xs">
+                  <input
+                    type="time"
+                    className="input-field text-xs"
+                    style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    value={customHours.full.start}
+                    onChange={(e) => setCustomHours((p) => ({ ...p, full: { ...p.full, start: e.target.value } }))}
+                  />
+                  <span>→</span>
+                  <input
+                    type="time"
+                    className="input-field text-xs"
+                    style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    value={customHours.full.end}
+                    onChange={(e) => setCustomHours((p) => ({ ...p, full: { ...p.full, end: e.target.value } }))}
+                  />
+                </div>
+              </div>
+
+              {/* Morning Shift */}
+              <div className="p-sm rounded flex items-center justify-between gap-md" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div className="flex items-center gap-xs">
+                  <span className="preset-color-dot" style={{ backgroundColor: '#10b981' }} />
+                  <span className="text-xs font-bold text-slate-800">Ca Sáng:</span>
+                </div>
+                <div className="flex items-center gap-xs">
+                  <input
+                    type="time"
+                    className="input-field text-xs"
+                    style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    value={customHours.morning.start}
+                    onChange={(e) => setCustomHours((p) => ({ ...p, morning: { ...p.morning, start: e.target.value } }))}
+                  />
+                  <span>→</span>
+                  <input
+                    type="time"
+                    className="input-field text-xs"
+                    style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    value={customHours.morning.end}
+                    onChange={(e) => setCustomHours((p) => ({ ...p, morning: { ...p.morning, end: e.target.value } }))}
+                  />
+                </div>
+              </div>
+
+              {/* Afternoon Shift */}
+              <div className="p-sm rounded flex items-center justify-between gap-md" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div className="flex items-center gap-xs">
+                  <span className="preset-color-dot" style={{ backgroundColor: '#f59e0b' }} />
+                  <span className="text-xs font-bold text-slate-800">Ca Chiều:</span>
+                </div>
+                <div className="flex items-center gap-xs">
+                  <input
+                    type="time"
+                    className="input-field text-xs"
+                    style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    value={customHours.afternoon.start}
+                    onChange={(e) => setCustomHours((p) => ({ ...p, afternoon: { ...p.afternoon, start: e.target.value } }))}
+                  />
+                  <span>→</span>
+                  <input
+                    type="time"
+                    className="input-field text-xs"
+                    style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    value={customHours.afternoon.end}
+                    onChange={(e) => setCustomHours((p) => ({ ...p, afternoon: { ...p.afternoon, end: e.target.value } }))}
+                  />
+                </div>
+              </div>
+
+              {/* Evening Shift */}
+              <div className="p-sm rounded flex items-center justify-between gap-md" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div className="flex items-center gap-xs">
+                  <span className="preset-color-dot" style={{ backgroundColor: '#8b5cf6' }} />
+                  <span className="text-xs font-bold text-slate-800">Ca Tối:</span>
+                </div>
+                <div className="flex items-center gap-xs">
+                  <input
+                    type="time"
+                    className="input-field text-xs"
+                    style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    value={customHours.evening.start}
+                    onChange={(e) => setCustomHours((p) => ({ ...p, evening: { ...p.evening, start: e.target.value } }))}
+                  />
+                  <span>→</span>
+                  <input
+                    type="time"
+                    className="input-field text-xs"
+                    style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                    value={customHours.evening.end}
+                    onChange={(e) => setCustomHours((p) => ({ ...p, evening: { ...p.evening, end: e.target.value } }))}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer flex justify-end gap-sm border-t pt-md">
+              <button className="btn btn-primary" onClick={() => {
+                setShowShiftHoursModal(false);
+                toast.success('Đã lưu cấu hình khung giờ ca làm!');
+              }}>
+                Lưu cấu hình ca
               </button>
             </div>
           </div>
