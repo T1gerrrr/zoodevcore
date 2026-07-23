@@ -1,0 +1,87 @@
+.my-schedule-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.unconfirmed-card {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.02));
+  border: 1.5px dashed rgba(245, 158, 11, 0.4);
+  padding: 3rem 1.5rem;
+  border-radius: var(--radius-md, 12px);
+}
+
+.unconfirmed-icon {
+  font-size: 3.5rem;
+  color: #d97706;
+  margin-bottom: 1rem;
+}
+
+.shifts-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.shift-day-card {
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-top: 4px solid #cbd5e1;
+  background-color: #ffffff;
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--shadow-sm);
+}
+
+.shift-day-card.is-working {
+  border-top-color: #1565c0;
+}
+
+.shift-day-card.is-off {
+  border-top-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+.shift-day-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.shift-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.shift-day-title {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.shift-day-date {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.shift-day-body {
+  padding-top: 0.875rem;
+}
+
+.shift-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.375rem;
+}
+
+.shift-time {
+  font-size: 0.875rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.shift-off-badge {
+  color: #64748b;
+  font-size: 0.9375rem;
+  font-style: italic;
+  padding: 0.5rem 0;
+}

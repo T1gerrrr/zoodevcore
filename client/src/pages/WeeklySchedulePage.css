@@ -1,0 +1,184 @@
+.schedule-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.week-selector-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md, 12px);
+  padding: 0.5rem 0.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.week-badge {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  background-color: #f8fafc;
+  color: #1e293b;
+  border-radius: var(--radius, 8px);
+  border: 1px solid #e2e8f0;
+}
+
+/* Status Banner */
+.status-banner {
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.status-banner.draft {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+}
+
+.status-banner.confirmed {
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+}
+
+.status-banner-icon {
+  font-size: 2.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.status-banner.draft .status-banner-icon {
+  color: #d97706;
+}
+
+.status-banner.confirmed .status-banner-icon {
+  color: #059669;
+}
+
+.status-banner-title {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.status-banner-desc {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+/* Preset Chips */
+.presets-bar {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--shadow-sm);
+}
+
+.preset-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #1e293b;
+  box-shadow: var(--shadow-sm);
+}
+
+.preset-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Schedule Table */
+.schedule-matrix-card {
+  padding: 0;
+  overflow-x: auto;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--shadow-sm);
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 920px;
+}
+
+.schedule-table th,
+.schedule-table td {
+  padding: 0.875rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+}
+
+.schedule-table th {
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-weight: 700;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background-color: #ffffff;
+  z-index: 10;
+  border-right: 2px solid #cbd5e1;
+}
+
+.schedule-table th.sticky-col {
+  background-color: #f8fafc;
+}
+
+.emp-cell .emp-name {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.emp-cell .emp-code {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.shift-cell {
+  text-align: center;
+  min-width: 125px;
+}
+
+.shift-select {
+  width: 100%;
+  padding: 0.5rem 0.375rem;
+  border-radius: 6px;
+  border: 1.5px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.shift-select option {
+  background-color: #ffffff;
+  color: #0f172a;
+  font-weight: 500;
+  padding: 6px 12px;
+}
+
+.shift-select:focus {
+  border-color: #1565c0;
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
+}
+
+.action-cell {
+  min-width: 130px;
+}
