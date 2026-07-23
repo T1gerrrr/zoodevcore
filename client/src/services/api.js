@@ -73,6 +73,7 @@ export const payrollAPI = {
   getWeekly: (params) => api.get('/payroll/weekly', { params }),
   adjustWeekly: (data) => api.post('/payroll/weekly/adjust', data),
   getMyPayroll: (params) => api.get('/payroll/my-payroll', { params }),
+  updateSalaryConfig: (data) => api.post('/payroll/salary-config', data),
 };
 
 // Schedule API

@@ -72,11 +72,34 @@ const checkIn = async (req, res) => {
       }
     }
 
-    // Upload photo to Cloudinary
-    const uploadResult = await uploadImage(photo, 'checkin');
+    // Fetch today's shift from confirmed weekly schedule
+    const { getWeekId } = require('./payrollController');
+    const currentWeekId = getWeekId();
+    let shiftStart = empData.schedule?.shiftStart || '08:00';
+    let shiftEnd = empData.schedule?.shiftEnd || '17:00';
+    let shiftType = 'full';
+
+    try {
+      const schedDoc = await db.collection('weekly_schedules').doc(currentWeekId).get();
+      if (schedDoc.exists) {
+        const schedData = schedDoc.data();
+        const todayShift = schedData.shifts?.[employeeId]?.[today];
+        if (todayShift) {
+          const stKey = todayShift.shiftType || todayShift.id;
+          if (stKey === 'off') {
+            return res.status(400).json({ error: 'Hôm nay theo lịch tuần bạn được nghỉ (OFF), không cần check-in.' });
+          }
+          if (todayShift.start) shiftStart = todayShift.start;
+          if (todayShift.end) shiftEnd = todayShift.end;
+          shiftType = stKey || 'full';
+        }
+      }
+    } catch (schedErr) {
+      console.warn('Weekly schedule lookup warning during checkin:', schedErr);
+    }
 
     // Check if late
-    const late = isLateCheckIn(empData.schedule.shiftStart);
+    const late = isLateCheckIn(shiftStart);
 
     // Create attendance record
     const attendanceData = {

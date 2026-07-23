@@ -35,9 +35,52 @@ const WeeklyPayrollPage = () => {
   // Form states for inline editing
   const [adjustments, setAdjustments] = useState({});
 
+  // Salary Config Modal state
+  const [showSalaryModal, setShowSalaryModal] = useState(false);
+  const [salaryForm, setSalaryForm] = useState({
+    employeeId: '',
+    name: '',
+    salaryType: 'hourly',
+    hourlyRate: 30000,
+    dailyRate: 250000,
+  });
+  const [savingSalary, setSavingSalary] = useState(false);
+
   useEffect(() => {
     fetchPayroll();
   }, [currentWeekId]);
+
+  const handleOpenSalaryModal = (emp) => {
+    setSalaryForm({
+      employeeId: emp.employeeId,
+      name: emp.name,
+      salaryType: emp.salaryType || 'hourly',
+      hourlyRate: emp.hourlyRate || 30000,
+      dailyRate: emp.dailyRate || 250000,
+    });
+    setShowSalaryModal(true);
+  };
+
+  const handleSaveSalaryConfig = async () => {
+    setSavingSalary(true);
+    try {
+      await payrollAPI.updateSalaryConfig({
+        employeeId: salaryForm.employeeId,
+        salaryType: salaryForm.salaryType,
+        hourlyRate: Number(salaryForm.hourlyRate),
+        dailyRate: Number(salaryForm.dailyRate),
+      });
+
+      toast.success(`Đã cập nhật mức lương cho ${salaryForm.name}!`);
+      setShowSalaryModal(false);
+      await fetchPayroll();
+    } catch (err) {
+      console.error('Update salary config error:', err);
+      toast.error('Không thể cập nhật mức lương');
+    } finally {
+      setSavingSalary(false);
+    }
+  };
 
   const fetchPayroll = async () => {
     setLoading(true);
@@ -231,10 +274,21 @@ const WeeklyPayrollPage = () => {
                     </td>
 
                     <td>
-                      <span className="badge badge-info mb-xs">
-                        {emp.salaryType === 'daily' ? 'Theo ngày' : 'Theo giờ'}
-                      </span>
-                      <div className="text-xs text-secondary">
+                      <div className="flex items-center gap-xs">
+                        <span className="badge badge-info">
+                          {emp.salaryType === 'daily' ? 'Theo ngày' : 'Theo giờ'}
+                        </span>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs text-primary"
+                          style={{ padding: '2px 6px', fontSize: '0.75rem' }}
+                          onClick={() => handleOpenSalaryModal(emp)}
+                          title="Cài đặt lại đơn giá lương"
+                        >
+                          ⚙️ Đổi lương
+                        </button>
+                      </div>
+                      <div className="text-xs text-secondary mt-xs">
                         {emp.salaryType === 'daily'
                           ? formatVND(emp.dailyRate) + '/ngày'
                           : formatVND(emp.hourlyRate) + '/giờ'}
@@ -326,6 +380,87 @@ const WeeklyPayrollPage = () => {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Salary Config Modal */}
+      {showSalaryModal && (
+        <div className="modal-backdrop">
+          <div className="modal-card card p-lg" style={{ maxWidth: 440, width: '90%', background: '#ffffff', borderRadius: 16 }}>
+            <div className="flex justify-between items-center mb-md border-b pb-sm">
+              <h3 className="font-bold text-base text-primary flex items-center gap-xs" style={{ margin: 0 }}>
+                ⚙️ Cài đặt mức lương - {salaryForm.name}
+              </h3>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowSalaryModal(false)}>✕</button>
+            </div>
+
+            <div className="modal-body flex flex-col gap-md mb-lg">
+              <div>
+                <label className="form-label font-semibold text-sm block mb-xs">Hình thức trả lương:</label>
+                <div className="flex gap-md" style={{ marginTop: 6 }}>
+                  <label className="flex items-center gap-xs cursor-pointer text-sm font-semibold">
+                    <input
+                      type="radio"
+                      name="modalSalaryType"
+                      value="hourly"
+                      checked={salaryForm.salaryType === 'hourly'}
+                      onChange={(e) => setSalaryForm((p) => ({ ...p, salaryType: e.target.value }))}
+                    />
+                    <span>Lương theo giờ</span>
+                  </label>
+                  <label className="flex items-center gap-xs cursor-pointer text-sm font-semibold">
+                    <input
+                      type="radio"
+                      name="modalSalaryType"
+                      value="daily"
+                      checked={salaryForm.salaryType === 'daily'}
+                      onChange={(e) => setSalaryForm((p) => ({ ...p, salaryType: e.target.value }))}
+                    />
+                    <span>Lương theo ngày</span>
+                  </label>
+                </div>
+              </div>
+
+              {salaryForm.salaryType === 'hourly' ? (
+                <div>
+                  <label className="form-label font-semibold text-sm block mb-xs">Đơn giá lương theo giờ (VNĐ/giờ):</label>
+                  <input
+                    type="number"
+                    className="form-input text-sm w-full"
+                    style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1' }}
+                    value={salaryForm.hourlyRate}
+                    onChange={(e) => setSalaryForm((p) => ({ ...p, hourlyRate: e.target.value }))}
+                    step={1000}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="form-label font-semibold text-sm block mb-xs">Đơn giá lương theo ngày (VNĐ/ngày):</label>
+                  <input
+                    type="number"
+                    className="form-input text-sm w-full"
+                    style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1' }}
+                    value={salaryForm.dailyRate}
+                    onChange={(e) => setSalaryForm((p) => ({ ...p, dailyRate: e.target.value }))}
+                    step={10000}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="modal-footer flex justify-end gap-sm border-t pt-md">
+              <button className="btn btn-secondary" onClick={() => setShowSalaryModal(false)}>
+                Hủy
+              </button>
+              <button
+                className="btn btn-primary flex items-center gap-xs"
+                onClick={handleSaveSalaryConfig}
+                disabled={savingSalary}
+              >
+                {savingSalary ? <span className="spinner spinner-sm" /> : <>Lưu cài đặt lương</>}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

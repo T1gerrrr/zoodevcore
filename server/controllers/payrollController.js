@@ -292,4 +292,46 @@ const getMyPayroll = async (req, res) => {
   }
 };
 
-module.exports = { getWeeklyPayroll, adjustWeeklyPayroll, getMyPayroll, getWeekId, getWeekRangeFromWeekId };
+/**
+ * POST /api/payroll/salary-config
+ * Staff updates employee salary configuration (salaryType, hourlyRate, dailyRate)
+ */
+const updateSalaryConfig = async (req, res) => {
+  try {
+    const { employeeId, salaryType, hourlyRate, dailyRate } = req.body;
+
+    if (!employeeId) {
+      return res.status(400).json({ error: 'Thiếu mã nhân viên employeeId' });
+    }
+
+    const empRef = db.collection('employees').doc(employeeId);
+    const empDoc = await empRef.get();
+
+    if (!empDoc.exists) {
+      return res.status(404).json({ error: 'Không tìm thấy nhân viên' });
+    }
+
+    const updateData = {
+      salaryType: salaryType || 'hourly',
+      hourlyRate: Number(hourlyRate) || 0,
+      dailyRate: Number(dailyRate) || 0,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await empRef.update(updateData);
+
+    res.json({ message: 'Đã cập nhật mức lương nhân viên thành công!', data: updateData });
+  } catch (error) {
+    console.error('Update salary config error:', error);
+    res.status(500).json({ error: 'Không thể cập nhật cấu hình lương' });
+  }
+};
+
+module.exports = {
+  getWeeklyPayroll,
+  adjustWeeklyPayroll,
+  getMyPayroll,
+  updateSalaryConfig,
+  getWeekId,
+  getWeekRangeFromWeekId,
+};

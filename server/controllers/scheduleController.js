@@ -259,9 +259,10 @@ const autoGenerateSchedule = async (req, res) => {
 
       // Determine OFF day indices for this employee (staggered for store coverage)
       const offIndices = new Set();
-      for (let o = 0; o < requiredOff; o++) {
-        const offDayIndex = (empIdx * 2 + o + Math.floor(empIdx / 2)) % 7;
-        offIndices.add(offDayIndex);
+      let startOffDay = (empIdx * Math.max(1, requiredOff)) % 7;
+      while (offIndices.size < requiredOff && offIndices.size < 7) {
+        offIndices.add(startOffDay % 7);
+        startOffDay++;
       }
 
       let workDayCounter = 0;
