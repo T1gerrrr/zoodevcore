@@ -274,29 +274,31 @@ const getHistory = async (req, res) => {
   try {
     const { employeeId, startDate, endDate, status } = req.query;
 
-    let query = db.collection('attendance').orderBy('date', 'desc');
+    let query = db.collection('attendance');
 
     if (employeeId) {
       query = query.where('employeeId', '==', employeeId);
     }
-    if (startDate) {
-      query = query.where('date', '>=', startDate);
-    }
-    if (endDate) {
-      query = query.where('date', '<=', endDate);
-    }
 
-    const snapshot = await query.limit(100).get();
+    const snapshot = await query.limit(300).get();
 
     let records = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
-    // Filter by status in memory (Firestore doesn't support multiple inequality)
+    if (startDate) {
+      records = records.filter((r) => r.date >= startDate);
+    }
+    if (endDate) {
+      records = records.filter((r) => r.date <= endDate);
+    }
     if (status) {
       records = records.filter((r) => r.status === status);
     }
+
+    // Sort descending by date in memory
+    records.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
     res.json(records);
   } catch (error) {

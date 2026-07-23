@@ -218,23 +218,16 @@ const getMyPayroll = async (req, res) => {
     }
     const emp = empDoc.data();
 
-    // Attendance records for week
-    const weekRecordsSnap = await db
+    // Attendance records for employee
+    const allEmpRecordsSnap = await db
       .collection('attendance')
       .where('employeeId', '==', employeeId)
-      .where('date', '>=', dateRange.start)
-      .where('date', '<=', dateRange.end)
+      .limit(500)
       .get();
-    const weekRecords = weekRecordsSnap.docs.map((doc) => doc.data());
+    const allEmpRecords = allEmpRecordsSnap.docs.map((doc) => doc.data());
 
-    // Attendance records for month
-    const monthRecordsSnap = await db
-      .collection('attendance')
-      .where('employeeId', '==', employeeId)
-      .where('date', '>=', monthRange.start)
-      .where('date', '<=', monthRange.end)
-      .get();
-    const monthRecords = monthRecordsSnap.docs.map((doc) => doc.data());
+    const weekRecords = allEmpRecords.filter((r) => r.date >= dateRange.start && r.date <= dateRange.end);
+    const monthRecords = allEmpRecords.filter((r) => r.date >= monthRange.start && r.date <= monthRange.end);
 
     const daysWorkedWeek = new Set(weekRecords.map((r) => r.date)).size;
     const totalHoursWeek = weekRecords.reduce((sum, r) => sum + (r.workHours || 0), 0);
