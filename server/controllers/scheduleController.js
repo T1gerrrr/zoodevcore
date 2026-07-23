@@ -218,7 +218,7 @@ const autoGenerateSchedule = async (req, res) => {
       const start = custom.start || defaultStart;
       const end = custom.end || defaultEnd;
       const label = start && end ? `${defaultLabel.split(' ')[0]} (${start}-${end})` : defaultLabel;
-      return { id: key, label, start, end, color };
+      return { id: key, shiftType: key, label, start, end, color };
     };
 
     const SHIFT_PRESETS = {
@@ -226,7 +226,7 @@ const autoGenerateSchedule = async (req, res) => {
       morning: getPreset('morning', 'Ca Sáng (08:00-12:00)', '08:00', '12:00', '#10b981'),
       afternoon: getPreset('afternoon', 'Ca Chiều (13:00-17:00)', '13:00', '17:00', '#f59e0b'),
       evening: getPreset('evening', 'Ca Tối (17:00-21:00)', '17:00', '21:00', '#8b5cf6'),
-      off: { id: 'off', label: 'Nghỉ (OFF)', start: '', end: '', color: '#94a3b8' },
+      off: { id: 'off', shiftType: 'off', label: 'Nghỉ (OFF)', start: '', end: '', color: '#94a3b8' },
     };
 
     // Calculate quotas breakdown if quota mode

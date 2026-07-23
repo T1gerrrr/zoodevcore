@@ -115,6 +115,15 @@ const WeeklySchedulePage = () => {
 
       toast.success(res.data.message || 'Đã tạo lịch tự động thành công!');
       setShowAutoModal(false);
+
+      if (res.data?.shifts) {
+        setScheduleData((prev) => ({
+          ...prev,
+          shifts: res.data.shifts,
+          status: 'draft',
+        }));
+      }
+
       await fetchInitialData();
     } catch (err) {
       console.error('Auto generate error:', err);
@@ -358,15 +367,16 @@ const WeeklySchedulePage = () => {
 
                   {weekDays.map((day) => {
                     const shift = scheduleData.shifts[emp.id]?.[day.dateStr];
+                    const shiftTypeVal = shift?.shiftType || shift?.id || 'off';
                     return (
                       <td key={day.key} className="shift-cell">
                         <select
                           className="shift-select"
                           style={{
                             borderColor: shift?.color || '#cbd5e1',
-                            backgroundColor: shift?.shiftType === 'off' ? 'rgba(148, 163, 184, 0.1)' : 'transparent',
+                            backgroundColor: shiftTypeVal === 'off' ? 'rgba(148, 163, 184, 0.1)' : 'transparent',
                           }}
-                          value={shift?.shiftType || 'off'}
+                          value={shiftTypeVal}
                           onChange={(e) => {
                             const found = SHIFT_PRESETS.find((p) => p.id === e.target.value);
                             if (found) setCellShift(emp.id, day.dateStr, found);
