@@ -182,7 +182,9 @@ const autoGenerateSchedule = async (req, res) => {
       weekId,
       workDaysPerWeek = 5,
       offDaysPerWeek = 2,
-      shiftMode = 'rotating', // 'full', 'rotating', 'morning', 'afternoon', 'evening'
+      shiftMode = 'rotating', // 'full', 'rotating', 'morning', 'afternoon', 'evening', 'quota'
+      customHours = {}, // { full: { start: '09:00', end: '16:00' }, morning: {...}, ... }
+      shiftQuotas = {}, // { fullCount: 2, morningCount: 2, afternoonCount: 1, eveningCount: 0 }
     } = req.body;
 
     if (!weekId) {
@@ -210,18 +212,47 @@ const autoGenerateSchedule = async (req, res) => {
       weekDates.push(d.toISOString().split('T')[0]);
     }
 
+    // Build base presets with custom start/end hours if provided
+    const getPreset = (key, defaultLabel, defaultStart, defaultEnd, color) => {
+      const custom = customHours[key] || {};
+      const start = custom.start || defaultStart;
+      const end = custom.end || defaultEnd;
+      const label = start && end ? `${defaultLabel.split(' ')[0]} (${start}-${end})` : defaultLabel;
+      return { id: key, label, start, end, color };
+    };
+
     const SHIFT_PRESETS = {
-      full: { id: 'full', label: 'Cả ngày (08:00-17:00)', start: '08:00', end: '17:00', color: '#3b82f6' },
-      morning: { id: 'morning', label: 'Ca Sáng (08:00-12:00)', start: '08:00', end: '12:00', color: '#10b981' },
-      afternoon: { id: 'afternoon', label: 'Ca Chiều (13:00-17:00)', start: '13:00', end: '17:00', color: '#f59e0b' },
-      evening: { id: 'evening', label: 'Ca Tối (17:00-21:00)', start: '17:00', end: '21:00', color: '#8b5cf6' },
+      full: getPreset('full', 'Cả ngày (08:00-17:00)', '08:00', '17:00', '#3b82f6'),
+      morning: getPreset('morning', 'Ca Sáng (08:00-12:00)', '08:00', '12:00', '#10b981'),
+      afternoon: getPreset('afternoon', 'Ca Chiều (13:00-17:00)', '13:00', '17:00', '#f59e0b'),
+      evening: getPreset('evening', 'Ca Tối (17:00-21:00)', '17:00', '21:00', '#8b5cf6'),
       off: { id: 'off', label: 'Nghỉ (OFF)', start: '', end: '', color: '#94a3b8' },
     };
 
+    // Calculate quotas breakdown if quota mode
+    const fullCount = parseInt(shiftQuotas.fullCount || 0, 10);
+    const morningCount = parseInt(shiftQuotas.morningCount || 0, 10);
+    const afternoonCount = parseInt(shiftQuotas.afternoonCount || 0, 10);
+    const eveningCount = parseInt(shiftQuotas.eveningCount || 0, 10);
+
+    const isQuotaMode = shiftMode === 'quota' || (fullCount + morningCount + afternoonCount + eveningCount > 0);
+    const totalWorkDays = isQuotaMode
+      ? Math.min(7, fullCount + morningCount + afternoonCount + eveningCount)
+      : parseInt(workDaysPerWeek, 10);
+
+    const requiredOff = Math.max(0, Math.min(7, 7 - totalWorkDays));
+
+    // Build employee shift type pool for quota mode
+    const quotaPool = [];
+    if (isQuotaMode) {
+      for (let i = 0; i < fullCount; i++) quotaPool.push('full');
+      for (let i = 0; i < morningCount; i++) quotaPool.push('morning');
+      for (let i = 0; i < afternoonCount; i++) quotaPool.push('afternoon');
+      for (let i = 0; i < eveningCount; i++) quotaPool.push('evening');
+    }
+
     const rotatingTypes = ['full', 'morning', 'afternoon', 'evening'];
     const generatedShifts = {};
-
-    const requiredOff = Math.max(0, Math.min(6, parseInt(offDaysPerWeek, 10)));
 
     employees.forEach((emp, empIdx) => {
       generatedShifts[emp.id] = {};
@@ -233,12 +264,21 @@ const autoGenerateSchedule = async (req, res) => {
         offIndices.add(offDayIndex);
       }
 
+      let workDayCounter = 0;
+
       weekDates.forEach((dateStr, dayIdx) => {
         if (offIndices.has(dayIdx)) {
           generatedShifts[emp.id][dateStr] = SHIFT_PRESETS.off;
         } else {
           let chosenPreset = SHIFT_PRESETS.full;
-          if (shiftMode === 'rotating') {
+
+          if (isQuotaMode && quotaPool.length > 0) {
+            // Pick from quota pool rotated by employee index
+            const poolIdx = (workDayCounter + empIdx) % quotaPool.length;
+            const shiftKey = quotaPool[poolIdx];
+            chosenPreset = SHIFT_PRESETS[shiftKey] || SHIFT_PRESETS.full;
+            workDayCounter++;
+          } else if (shiftMode === 'rotating') {
             const shiftTypeIndex = (empIdx + dayIdx) % rotatingTypes.length;
             const shiftKey = rotatingTypes[shiftTypeIndex];
             chosenPreset = SHIFT_PRESETS[shiftKey] || SHIFT_PRESETS.full;

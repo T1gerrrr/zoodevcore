@@ -197,6 +197,57 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile Responsive Styling */
+@media (max-width: 768px) {
+  .schedule-page {
+    padding: 0.5rem;
+  }
+
+  .week-selector-card {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .presets-bar {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 0.5rem;
+  }
+
+  .modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 85vh !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    animation: slideUpModal 0.25s ease-out;
+  }
+
+  @keyframes slideUpModal {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .schedule-matrix-card {
+    margin-bottom: 2rem;
+  }
+
+  .shift-select {
+    padding: 0.4rem 0.2rem;
+    font-size: 0.75rem;
+  }
 }

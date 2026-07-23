@@ -78,7 +78,21 @@ const WeeklySchedulePage = () => {
   const [autoConfig, setAutoConfig] = useState({
     workDays: 5,
     offDays: 2,
-    shiftMode: 'rotating',
+    shiftMode: 'quota', // 'quota', 'rotating', 'full'
+  });
+
+  const [shiftQuotas, setShiftQuotas] = useState({
+    fullCount: 2,
+    morningCount: 2,
+    afternoonCount: 1,
+    eveningCount: 0,
+  });
+
+  const [customHours, setCustomHours] = useState({
+    full: { start: '09:00', end: '16:00' },
+    morning: { start: '08:00', end: '12:00' },
+    afternoon: { start: '13:00', end: '17:00' },
+    evening: { start: '17:00', end: '21:00' },
   });
 
   const weekDays = getDatesOfWeek(currentWeekId);
@@ -95,6 +109,8 @@ const WeeklySchedulePage = () => {
         workDaysPerWeek: autoConfig.workDays,
         offDaysPerWeek: autoConfig.offDays,
         shiftMode: autoConfig.shiftMode,
+        shiftQuotas,
+        customHours,
       });
 
       toast.success(res.data.message || 'Đã tạo lịch tự động thành công!');
@@ -392,68 +408,179 @@ const WeeklySchedulePage = () => {
       {/* Auto Schedule Settings Modal */}
       {showAutoModal && (
         <div className="modal-backdrop">
-          <div className="modal-card card p-lg" style={{ maxWidth: 520, width: '90%', background: '#ffffff', borderRadius: 16 }}>
+          <div className="modal-card card p-md modal-scrollable" style={{ maxWidth: 580, width: '92%', maxHeight: '90vh', overflowY: 'auto', background: '#ffffff', borderRadius: 16 }}>
             <div className="flex justify-between items-center mb-md border-b pb-sm">
-              <h3 className="font-bold text-lg text-primary flex items-center gap-xs" style={{ margin: 0 }}>
-                🤖 Thiết lập xếp lịch tự động thông minh
+              <h3 className="font-bold text-base text-primary flex items-center gap-xs" style={{ margin: 0 }}>
+                🤖 Thiết lập xếp ca tự động thông minh
               </h3>
               <button className="btn btn-ghost btn-sm" onClick={() => setShowAutoModal(false)}>✕</button>
             </div>
 
             <div className="modal-body flex flex-col gap-md mb-lg">
-              <div>
-                <label className="form-label font-semibold text-sm block mb-xs">
-                  Số ca làm việc / tuần của mỗi nhân viên:
-                </label>
-                <select
-                  className="input-select w-full"
-                  style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1' }}
-                  value={autoConfig.workDays}
-                  onChange={(e) => {
-                    const work = parseInt(e.target.value, 10);
-                    setAutoConfig((prev) => ({
-                      ...prev,
-                      workDays: work,
-                      offDays: Math.max(0, 7 - work),
-                    }));
-                  }}
-                >
-                  <option value={5}>5 ca làm / tuần (Nghỉ 2 ngày)</option>
-                  <option value={6}>6 ca làm / tuần (Nghỉ 1 ngày)</option>
-                  <option value={4}>4 ca làm / tuần (Nghỉ 3 ngày)</option>
-                  <option value={7}>7 ca làm / tuần (Không nghỉ)</option>
-                </select>
-              </div>
+              {/* Section 1: Shift breakdown quota */}
+              <div className="p-sm rounded" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <h4 className="font-bold text-sm mb-xs text-slate-800 flex items-center gap-xs">
+                  📊 1. Phân bổ số lượng ca làm / tuần cho 1 nhân viên:
+                </h4>
+                <div className="grid grid-cols-2 gap-sm mt-xs">
+                  <div>
+                    <label className="text-xs font-semibold block text-slate-700 mb-1">🟦 Số ca Dài / Cả ngày:</label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={7}
+                      className="input-field text-sm w-full"
+                      style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                      value={shiftQuotas.fullCount}
+                      onChange={(e) => setShiftQuotas((p) => ({ ...p, fullCount: Math.max(0, parseInt(e.target.value || 0, 10)) }))}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold block text-slate-700 mb-1">🟩 Số ca Sáng:</label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={7}
+                      className="input-field text-sm w-full"
+                      style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                      value={shiftQuotas.morningCount}
+                      onChange={(e) => setShiftQuotas((p) => ({ ...p, morningCount: Math.max(0, parseInt(e.target.value || 0, 10)) }))}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold block text-slate-700 mb-1">🟨 Số ca Chiều:</label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={7}
+                      className="input-field text-sm w-full"
+                      style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                      value={shiftQuotas.afternoonCount}
+                      onChange={(e) => setShiftQuotas((p) => ({ ...p, afternoonCount: Math.max(0, parseInt(e.target.value || 0, 10)) }))}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold block text-slate-700 mb-1">🟪 Số ca Tối:</label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={7}
+                      className="input-field text-sm w-full"
+                      style={{ padding: '6px 10px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                      value={shiftQuotas.eveningCount}
+                      onChange={(e) => setShiftQuotas((p) => ({ ...p, eveningCount: Math.max(0, parseInt(e.target.value || 0, 10)) }))}
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <label className="form-label font-semibold text-sm block mb-xs">
-                  Số ngày nghỉ (OFF) / tuần:
-                </label>
-                <div className="p-xs text-sm font-bold text-secondary bg-gray-50 rounded border" style={{ padding: '8px 12px' }}>
-                  🗓️ {autoConfig.offDays} ngày nghỉ (OFF) / tuần
+                <div className="flex justify-between items-center mt-sm pt-xs border-t text-xs font-bold">
+                  <span className="text-primary">
+                    👉 Tổng ca làm: {shiftQuotas.fullCount + shiftQuotas.morningCount + shiftQuotas.afternoonCount + shiftQuotas.eveningCount} ca/tuần
+                  </span>
+                  <span className="text-amber-700">
+                    🗓️ Tự động nghỉ (OFF): {Math.max(0, 7 - (shiftQuotas.fullCount + shiftQuotas.morningCount + shiftQuotas.afternoonCount + shiftQuotas.eveningCount))} ngày/tuần
+                  </span>
                 </div>
               </div>
 
-              <div>
-                <label className="form-label font-semibold text-sm block mb-xs">
-                  Quy tắc phân bổ khung giờ ca làm:
-                </label>
-                <select
-                  className="input-select w-full"
-                  style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #cbd5e1' }}
-                  value={autoConfig.shiftMode}
-                  onChange={(e) => setAutoConfig((prev) => ({ ...prev, shiftMode: e.target.value }))}
-                >
-                  <option value="rotating">🔄 Xoay ca công bằng (Đổi luân phiên Cả ngày, Sáng, Chiều, Tối)</option>
-                  <option value="full">🟦 Ca Cả Ngày (08:00 - 17:00)</option>
-                  <option value="morning">🟩 Ca Sáng (08:00 - 12:00)</option>
-                  <option value="afternoon">🟨 Ca Chiều (13:00 - 17:00)</option>
-                  <option value="evening">🟪 Ca Tối (17:00 - 21:00)</option>
-                </select>
+              {/* Section 2: Custom Shift Hours */}
+              <div className="p-sm rounded" style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <h4 className="font-bold text-sm mb-xs text-slate-800 flex items-center gap-xs">
+                  ⏰ 2. Cài đặt khung giờ cho từng ca (Ví dụ: 09:00 - 16:00):
+                </h4>
+                <div className="flex flex-col gap-xs text-xs">
+                  {/* Full shift custom hours */}
+                  <div className="flex items-center justify-between gap-xs">
+                    <span className="font-semibold text-slate-700 w-24">Ca Dài / Full:</span>
+                    <div className="flex items-center gap-xs">
+                      <input
+                        type="time"
+                        className="input-field text-xs"
+                        style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                        value={customHours.full.start}
+                        onChange={(e) => setCustomHours((p) => ({ ...p, full: { ...p.full, start: e.target.value } }))}
+                      />
+                      <span>→</span>
+                      <input
+                        type="time"
+                        className="input-field text-xs"
+                        style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                        value={customHours.full.end}
+                        onChange={(e) => setCustomHours((p) => ({ ...p, full: { ...p.full, end: e.target.value } }))}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Morning shift custom hours */}
+                  <div className="flex items-center justify-between gap-xs">
+                    <span className="font-semibold text-slate-700 w-24">Ca Sáng:</span>
+                    <div className="flex items-center gap-xs">
+                      <input
+                        type="time"
+                        className="input-field text-xs"
+                        style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                        value={customHours.morning.start}
+                        onChange={(e) => setCustomHours((p) => ({ ...p, morning: { ...p.morning, start: e.target.value } }))}
+                      />
+                      <span>→</span>
+                      <input
+                        type="time"
+                        className="input-field text-xs"
+                        style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                        value={customHours.morning.end}
+                        onChange={(e) => setCustomHours((p) => ({ ...p, morning: { ...p.morning, end: e.target.value } }))}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Afternoon shift custom hours */}
+                  <div className="flex items-center justify-between gap-xs">
+                    <span className="font-semibold text-slate-700 w-24">Ca Chiều:</span>
+                    <div className="flex items-center gap-xs">
+                      <input
+                        type="time"
+                        className="input-field text-xs"
+                        style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                        value={customHours.afternoon.start}
+                        onChange={(e) => setCustomHours((p) => ({ ...p, afternoon: { ...p.afternoon, start: e.target.value } }))}
+                      />
+                      <span>→</span>
+                      <input
+                        type="time"
+                        className="input-field text-xs"
+                        style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                        value={customHours.afternoon.end}
+                        onChange={(e) => setCustomHours((p) => ({ ...p, afternoon: { ...p.afternoon, end: e.target.value } }))}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Evening shift custom hours */}
+                  <div className="flex items-center justify-between gap-xs">
+                    <span className="font-semibold text-slate-700 w-24">Ca Tối:</span>
+                    <div className="flex items-center gap-xs">
+                      <input
+                        type="time"
+                        className="input-field text-xs"
+                        style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                        value={customHours.evening.start}
+                        onChange={(e) => setCustomHours((p) => ({ ...p, evening: { ...p.evening, start: e.target.value } }))}
+                      />
+                      <span>→</span>
+                      <input
+                        type="time"
+                        className="input-field text-xs"
+                        style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                        value={customHours.evening.end}
+                        onChange={(e) => setCustomHours((p) => ({ ...p, evening: { ...p.evening, end: e.target.value } }))}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="card p-sm text-xs" style={{ backgroundColor: '#eff6ff', border: '1px solid #bfdbfe', color: '#1e40af', borderRadius: 8 }}>
-                💡 <strong>Cơ chế tự động:</strong> Hệ thống sẽ tự động dải lệch ngày nghỉ (staggered OFF days) giữa {employees.length} nhân viên để cửa hàng luôn có đủ nhân sự trực mỗi ngày và đảm bảo tổng ca làm bằng nhau.
+                💡 <strong>Cơ chế tự động:</strong> Thuật toán sẽ dải đều đúng số lượng ca dài/sáng/chiều/tối và ngày nghỉ lệch nhau giữa {employees.length} nhân viên để đảm bảo công bằng 100% và cửa hàng luôn đủ nhân sự.
               </div>
             </div>
 
