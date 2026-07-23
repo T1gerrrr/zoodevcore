@@ -197,6 +197,7 @@
 }
 
 /* ======================== */
+/* ======================== */
 /* Bottom Navigation        */
 /* ======================== */
 .bottom-nav {
@@ -204,14 +205,17 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: var(--bottom-nav-height);
+  height: auto;
+  min-height: calc(var(--bottom-nav-height) + 16px);
   background: var(--bg-white);
   border-top: 1px solid var(--border-light);
   display: flex;
   align-items: center;
   justify-content: space-around;
   z-index: 50;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-top: 8px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .bottom-nav-item {
@@ -223,7 +227,7 @@
   text-decoration: none;
   font-size: 0.75rem;
   font-weight: 500;
-  padding: 8px 16px;
+  padding: 6px 16px;
   border-radius: var(--radius);
   transition: color 0.15s ease;
 }
@@ -282,7 +286,8 @@
   }
 }
 
-/* Employee layout: add padding for bottom nav */
+/* Layout padding to prevent bottom nav from overlapping page content on iOS Safari */
+.main-content .page-content,
 .main-content:not(.with-sidebar) .page-content {
-  padding-bottom: calc(var(--bottom-nav-height) + 16px);
+  padding-bottom: calc(var(--bottom-nav-height) + max(48px, env(safe-area-inset-bottom, 48px)));
 }
